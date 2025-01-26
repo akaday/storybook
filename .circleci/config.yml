@@ -265,8 +265,6 @@ jobs:
                   yarn bench-packages --upload
       - store_artifacts:
           path: bench/packages/results.json
-      - store_artifacts:
-          path: bench/packages/compare-with-<< pipeline.parameters.ghBaseBranch >>.json
       - report-workflow-on-failure
       - cancel-workflow-on-failure
   check:
@@ -343,7 +341,7 @@ jobs:
           name: Test
           command: |
             cd code
-            SHARD="$((${CIRCLE_NODE_INDEX}+1))"; yarn test --reporter=blob --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
+            SHARD="$((${CIRCLE_NODE_INDEX}+1))"; yarn test --reporter=blob --reporter=default --shard=${SHARD}/${CIRCLE_NODE_TOTAL}
       # TODO: bring coverage back later. This has caused flakiness in the tests because
       # Somehow Vitest reports coverage while some tests are still running,
       # then it tries to report coverage again and as result it crashes like this:
@@ -845,19 +843,19 @@ workflows:
           requires:
             - unit-tests
       - create-sandboxes:
-          parallelism: 13
+          parallelism: 14
           requires:
             - build
       - build-sandboxes:
-          parallelism: 13
+          parallelism: 14
           requires:
             - create-sandboxes
       - chromatic-sandboxes:
-          parallelism: 10
+          parallelism: 11
           requires:
             - build-sandboxes
       - e2e-production:
-          parallelism: 8
+          parallelism: 9
           requires:
             - build-sandboxes
       - e2e-dev:
@@ -865,7 +863,7 @@ workflows:
           requires:
             - create-sandboxes
       - test-runner-production:
-          parallelism: 8
+          parallelism: 9
           requires:
             - build-sandboxes
       - vitest-integration:
@@ -921,19 +919,19 @@ workflows:
           requires:
             - unit-tests
       - create-sandboxes:
-          parallelism: 19
+          parallelism: 20
           requires:
             - build
       - build-sandboxes:
-          parallelism: 19
+          parallelism: 20
           requires:
             - create-sandboxes
       - chromatic-sandboxes:
-          parallelism: 16
+          parallelism: 17
           requires:
             - build-sandboxes
       - e2e-production:
-          parallelism: 14
+          parallelism: 15
           requires:
             - build-sandboxes
       - e2e-dev:
@@ -941,7 +939,7 @@ workflows:
           requires:
             - create-sandboxes
       - test-runner-production:
-          parallelism: 14
+          parallelism: 15
           requires:
             - build-sandboxes
       - vitest-integration:
@@ -995,22 +993,22 @@ workflows:
           requires:
             - build
       - create-sandboxes:
-          parallelism: 36
+          parallelism: 37
           requires:
             - build
       # - smoke-test-sandboxes: # disabled for now
       #     requires:
       #       - create-sandboxes
       - build-sandboxes:
-          parallelism: 36
+          parallelism: 37
           requires:
             - create-sandboxes
       - chromatic-sandboxes:
-          parallelism: 33
+          parallelism: 34
           requires:
             - build-sandboxes
       - e2e-production:
-          parallelism: 31
+          parallelism: 32
           requires:
             - build-sandboxes
       - e2e-dev:
@@ -1018,7 +1016,7 @@ workflows:
           requires:
             - create-sandboxes
       - test-runner-production:
-          parallelism: 31
+          parallelism: 32
           requires:
             - build-sandboxes
       - vitest-integration:
